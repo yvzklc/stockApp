@@ -1,7 +1,7 @@
 import axios from "axios"
 import { toastErrorNotify, toastSuccessNotify } from "../helper/ToastNotify"
 import { useNavigate } from "react-router-dom"
-import { fetchFail, fetchStart, loginSuccess } from "../features/authSlice"
+import { fetchFail, fetchStart, loginSuccess, registerSuccess } from "../features/authSlice"
 import { useDispatch } from "react-redux"
 
 const useAuthCalls = () => {
@@ -25,7 +25,22 @@ const useAuthCalls = () => {
     }
   }
 
-  const register = async () => {}
+  const register = async (userInfo) => {
+    dispatch(fetchStart())
+    try {
+      const { data } = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/users/`,
+        userInfo
+      )
+      dispatch(registerSuccess(data))
+      toastSuccessNotify("Register işlemi basarili.")
+      navigate("/stock")
+    } catch (error) {
+      dispatch(fetchFail())
+      toastErrorNotify("Register işlemi başarisiz oldu.")
+      console.log(error)
+    }
+  }
 
   const logout = async () => {}
 
